@@ -12,6 +12,8 @@
         <FIELD NAME="auto_calculate_final_method" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="This defines what method is used to calculate the final grade from the previous: 0 - last previous grade, 1 - minimum previous grade, 2- maximum previous grade, 3- average"/>
         <FIELD NAME="secondary_graders_id_list" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="The persons that will get notified if a second grader is required."/>
         <FIELD NAME="criteria" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The grading criteria"/>
+        <FIELD NAME="reconcile_mode" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="2" SEQUENCE="false" COMMENT="0 for the default, initial grader finalises and publishes, 1 grade in last round publishes grade."/>
+        <FIELD NAME="grading_rounds" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="2" SEQUENCE="false" COMMENT="How many rounds of marking in total do be done including final reconcilation."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -61,6 +61,27 @@ class gradingform_multigraders_editform extends moodleform {
         $areaid = required_param('areaid', PARAM_INT);
         $manager = get_grading_manager($areaid);
 
+        $finalgrademodes = [
+            0 => 'Initial Grader decides',
+            1 => 'Final Grader decides'
+        ];
+        $form->addElement('select', 'reconcile_mode', get_string('finalgrademode', 'gradingform_multigraders'), $finalgrademodes);
+
+        $maxRounds = 5; // TODO make this configurable.
+        $gradingrounds = [
+            '' => 'Graders decide'
+        ];
+        for($i = 2; $i < $maxRounds; $i++) {
+            $rounds = $i-1;
+            $wordforgrade = "grades";
+            if ($rounds == 1) {
+                $wordforgrade = "grade";
+            }
+            $gradingrounds[$i] = "{$i}rounds ({$rounds} {$wordforgrade}, 1 final)";
+        }
+        $form->addElement('select', 'grading_rounds', get_string('numgradinground', 'gradingform_multigraders'), $gradingrounds);
+        $form->disabledIf('grading_rounds', 'reconcile_mode', 'eq', 0);
+
         $context = $manager->get_context();
         $graders = get_enrolled_users($context, 'mod/assignment:grade', 0, 'u.*', 'u.lastname ASC, u.firstname ASC');
         foreach ($graders as $grader) {
@@ -71,6 +92,8 @@ class gradingform_multigraders_editform extends moodleform {
                 get_string('secondary_graders', 'gradingform_multigraders'), $graders);
         $select->setMultiple(true);
         $form->addHelpButton('secondary_graders_id_list', 'secondary_graders', 'gradingform_multigraders');
+        $form->disabledIf('secondary_graders_id_list', 'reconcile_mode', 'eq', 1 );
+        $form->disabledIf('secondary_graders_id_list', 'grading_rounds', 'neq', '');
 
         //Grading criteria
         $form->addElement('editor', 'criteria', get_string('criteria', 'gradingform_multigraders'));

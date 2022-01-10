@@ -69,7 +69,10 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
      */
     public function display_form($mode, $options, $values = null, $elementName = 'multigraders', $validationErrors = Array(), $gradeRange = null) {
         global $USER,$CFG,$PAGE;
+
         $output = '';
+
+        $output .= print_r($options,1);
         $this->validationErrors = $validationErrors;
         $this->gradeRange = $gradeRange;
         $this->elementName = $elementName;
@@ -239,6 +242,7 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
         if($mode == gradingform_multigraders_controller::DISPLAY_VIEW ||
            $mode == gradingform_multigraders_controller::DISPLAY_REVIEW ||
            $mode == gradingform_multigraders_controller::DISPLAY_EVAL_FROZEN){
+            echo("noedit");
             $allowFinalGradeEdit = false;
             $userIsAllowedToGrade = false;
             if($firstGradeRecord === null){
@@ -249,6 +253,7 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
             $mode == gradingform_multigraders_controller::DISPLAY_EVAL) && //current user is an ADMIN or a teacher
             $currentRecord !== null &&                                      //that already graded this item
             $firstGradeRecord !== $currentRecord){                          //but the grade they gave was not the final one
+            echo("Gradednotfinal");
             $allowFinalGradeEdit = false;
             if($firstGradeRecord) {//final grade was added
                 $finalGradeMessage = html_writer::tag('div', get_string('useralreadygradedthisitemfinal', 'gradingform_multigraders',gradingform_multigraders_instance::get_user_url($firstGradeRecord->grader)), array('class' => 'alert-error'));
@@ -259,6 +264,7 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
         if (($mode == gradingform_multigraders_controller::DISPLAY_EVAL_FULL ||
              $mode == gradingform_multigraders_controller::DISPLAY_EVAL ) && //current user is an ADMIN or a teacher
             $firstGradeRecord){
+            echo("Full");
             $allowFinalGradeEdit = false;
             $userIsAllowedToGrade = false;
             if($firstGradeRecord != $currentRecord) {//current grader is not the initial grader
@@ -287,6 +293,7 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
         }
 
         //current user is the one that gave the final grade or is grading at the moment
+
         if($firstGradeRecord && $firstGradeRecord == $currentRecord){
             $firstGradeRecord->gradingFinal = true;
             $firstGradeRecord->allowCopyingOfDataToFinal = true;
@@ -709,7 +716,7 @@ class gradingform_multigraders_renderer extends plugin_renderer_base {
         $definition = $instance->get_controller()->get_definition();
         $options = new stdClass();
         if($definition) {
-            foreach (array('secondary_graders_id_list','criteria','blind_marking','show_intermediary_to_students','auto_calculate_final_method') as $key) {
+            foreach (array('secondary_graders_id_list','criteria','blind_marking','show_intermediary_to_students','auto_calculate_final_method','reconcile_mode', 'grading_rounds') as $key) {
                 if (isset($definition->$key)) {
                     $options->$key = $definition->$key;
                 }
